@@ -101,9 +101,12 @@ class PyTorchMegatronLM(rfm.RunOnlyRegressionTest):
     @run_after('setup')
     def set_executable_opts(self):
         model_config = self.configurations[self.model]
+
+        self.account_name = "a-csstaff" if self.current_system.name == "clariden" else "csstaff"
+
         self.env_vars = {
             'CUDA_DEVICE_MAX_CONNECTIONS': 1,
-            'MASTER_ADDRESS': '$(srun -A csstaff -N1 hostname)',
+            'MASTER_ADDRESS': f'$(srun -A {self.account_name} -N1 hostname)',
             'MASTER_PORT': '28400',
             'WORLD_SIZE': f'{self.num_nodes * self.num_gpus_per_node}',
             'OMP_NUM_THREADS': '72'
@@ -247,6 +250,7 @@ class PyTorchMegatronLM_CE_Dev(PyTorchMegatronLM, ContainerEngineMixin):
     def set_container_config(self):
         self.container_env_table = {
             'annotations.com.hooks': {
+                'netstack.source': 'artifact:26.05.1',
                 'aws_ofi_nccl.enabled': 'true',
                 'aws_ofi_nccl.variant': 'cuda-dl',
             },

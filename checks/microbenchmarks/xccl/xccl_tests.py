@@ -169,6 +169,7 @@ class NCCLTestsCE(XCCLTestsBaseCE):
     @run_after('init')
     def setup_ce(self):
         self.container_env_table['annotations.com.hooks'].update({
+            'netstack.source': 'artifact:26.05.1',
             'aws_ofi_nccl.variant': 'cuda12'
         })
 

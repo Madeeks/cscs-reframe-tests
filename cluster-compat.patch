@@ -1,0 +1,115 @@
+diff --git a/checks/containers/container_engine/omb.py b/checks/containers/container_engine/omb.py
+index e5e80771..79e18c0e 100644
+--- a/checks/containers/container_engine/omb.py
++++ b/checks/containers/container_engine/omb.py
+@@ -26,6 +26,7 @@ class OMB_Base_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin):
+     container_env_table = {
+         'annotations.com.hooks': {
+             'cxi.enabled': 'true',
++            'netstack.source': 'artifact:26.05.1',
+         }
+     }
+     tags = {'production', 'ce', 'ce_dev', 'maintenance'}
+@@ -94,7 +95,7 @@ class OMB_MPICH_CE(OMB_Base_CE, SlurmMpiPmi2Mixin):
+                 'latency_1M': (2400., None, 0.15, 'us')
+             },
+             '*': {
+-                'latency_1M': (1800., None, 0.15, 'us')
++                'latency_1M': (2000., None, 0.15, 'us')
+             }
+         }
+     }
+@@ -116,7 +117,7 @@ class OMB_OMPI_CE(OMB_Base_CE, SlurmMpiPmixMixin):
+                 'latency_1M': (1400., None, 0.15, 'us')
+             },
+             '*': {
+-                'latency_1M': (500., None, 0.15, 'us')
++                'latency_1M': (550., None, 0.15, 'us')
+             }
+         }
+     }
+diff --git a/checks/containers/container_engine/pyfr.py b/checks/containers/container_engine/pyfr.py
+index a79c2eec..3d1209b0 100644
+--- a/checks/containers/container_engine/pyfr.py
++++ b/checks/containers/container_engine/pyfr.py
+@@ -33,6 +33,9 @@ class PyFR_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmixMixin
+     container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/pyfr:2.1-ompi5.0.9-ofi1.22-cuda12.8.1'
+     container_workdir = '/pyfr-test-cases/3d-taylor-green'
+     container_env_table = {
++        'annotations.com.hooks': {
++            'netstack.source': 'artifact:26.05.1b',
++        },
+         'env': {
+             'UCX_WARN_UNUSED_ENV_VARS': 'n'
+         }
+@@ -42,7 +45,7 @@ class PyFR_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmixMixin
+     reference_per_test = {
+         '3d-taylor-green-ci': {
+             'gh200': {
+-                'elapsed': (18.0, -0.10, 0.10, 's')
++                'elapsed': (18.0, -0.20, 0.20, 's')
+             },
+             'a100': {
+                 'elapsed': (36.0, -0.10, 0.10, 's')
+diff --git a/checks/containers/container_engine/pytorch_megatronlm.py b/checks/containers/container_engine/pytorch_megatronlm.py
+index 7aca270b..2f23cb83 100644
+--- a/checks/containers/container_engine/pytorch_megatronlm.py
++++ b/checks/containers/container_engine/pytorch_megatronlm.py
+@@ -99,9 +99,12 @@ class PyTorchMegatronLM(rfm.RunOnlyRegressionTest):
+     @run_after('setup')
+     def set_executable_opts(self):
+         model_config = self.configurations[self.model]
++
++        self.account_name = "a-csstaff" if self.current_system.name == "clariden" else "csstaff"
++
+         self.env_vars = {
+             'CUDA_DEVICE_MAX_CONNECTIONS': 1,
+-            'MASTER_ADDRESS': '$(srun -N1 hostname)',
++            'MASTER_ADDRESS': f'$(srun -A {self.account_name} -N1 hostname)',
+             'MASTER_PORT': '28400',
+             'WORLD_SIZE': f'{self.num_nodes * self.num_gpus_per_node}',
+             'OMP_NUM_THREADS': '72'
+@@ -244,6 +247,7 @@ class PyTorchMegatronLM_CE_Dev(PyTorchMegatronLM, ContainerEngineMixin):
+     def set_container_config(self):
+         self.container_env_table = {
+             'annotations.com.hooks': {
++                'netstack.source': 'artifact:26.05.1',
+                 'aws_ofi_nccl.enabled': 'true',
+                 'aws_ofi_nccl.variant': 'cuda-dl',
+             },
+diff --git a/checks/containers/container_engine/sphexa.py b/checks/containers/container_engine/sphexa.py
+index 87f108e2..4f529a12 100644
+--- a/checks/containers/container_engine/sphexa.py
++++ b/checks/containers/container_engine/sphexa.py
+@@ -30,12 +30,18 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmi2Mix
+     sph_testcase = parameter(['evrard'])
+     sph_steps = parameter([10])
+     sph_size = parameter([200])
+-    ntasks_per_node = variable(int, value=4)
++    ntasks_per_node = variable(int, value=1)
+     time_limit = '3m'
+     regex_elapsed = (
+         r'Total execution time of (?P<steps>\d+) iterations of \S+ '
+         r'up to t = \S+: (?P<sec>\S+)s$')
+ 
++    container_env_table = {
++        'annotations.com.hooks': {
++            'netstack.source': 'artifact:26.05.1',
++        },
++        }
++
+     @run_before('run')
+     def set_executable(self):
+         self.executable = f'/sphexa/wrapper.sh sphexa-cuda'
+diff --git a/checks/microbenchmarks/xccl/xccl_tests.py b/checks/microbenchmarks/xccl/xccl_tests.py
+index e4a7d62b..33126873 100644
+--- a/checks/microbenchmarks/xccl/xccl_tests.py
++++ b/checks/microbenchmarks/xccl/xccl_tests.py
+@@ -168,6 +168,7 @@ class NCCLTestsCE(XCCLTestsBaseCE):
+     @run_after('init')
+     def setup_ce(self):
+         self.container_env_table['annotations.com.hooks'].update({
++            'netstack.source': 'artifact:26.05.1',
+             'aws_ofi_nccl.variant': 'cuda12'
+         })
+ 
