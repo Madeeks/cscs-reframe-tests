@@ -1,4 +1,4 @@
-# Copyright 2026 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
+# Copyright Swiss National Supercomputing Centre (CSCS/ETH Zurich)
 # ReFrame Project Developers. See the top-level LICENSE file for details.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -59,9 +59,7 @@ class PyTorchMegatronLM(rfm.RunOnlyRegressionTest):
             'tensor_model_parallel_size': 1,
             'context_model_parallel_size': 1,
             'pipeline_model_parallel_size': 1,
-
-            'ref_throughput_per_gpu': 630.0,
-
+            'ref_throughput_per_gpu': 630.0,  # <-- perf. ref.
             'dtype': 'fp8',
         }
     }
@@ -88,7 +86,8 @@ class PyTorchMegatronLM(rfm.RunOnlyRegressionTest):
             gpu_arch != 'sm_90', 'test tuned only for 8xGH200'
         )
         self.num_cpus_per_task = model_config.get(
-            'cpus_per_task', (curr_part.processor.num_cpus // self.num_tasks_per_node)
+            'cpus_per_task',
+            (curr_part.processor.num_cpus // self.num_tasks_per_node)
         )
         self.reference = {
             '*': {
@@ -130,7 +129,8 @@ class PyTorchMegatronLM(rfm.RunOnlyRegressionTest):
             '--num-query-groups 8',
             '--kv-channels 128',
             f'--seq-length {model_config["sequence_length"]}',
-            f'--max-position-embeddings {model_config["max_position_embeddings"]}',
+            f'--max-position-embeddings '
+            f'{model_config["max_position_embeddings"]}',
             '--position-embedding-type rope',
             '--rotary-base 1000000',
             '--rotary-percent 1.0',
@@ -178,8 +178,10 @@ class PyTorchMegatronLM(rfm.RunOnlyRegressionTest):
             ]
 
         model_parallel_args = [
-            f'--tensor-model-parallel-size {model_config["tensor_model_parallel_size"]}',
-            f'--context-parallel-size {model_config.get("context_parallel_size", 1)}',
+            f'--tensor-model-parallel-size '
+            f'{model_config["tensor_model_parallel_size"]}',
+            f'--context-parallel-size '
+            f'{model_config.get("context_parallel_size", 1)}',
             '--sequence-parallel',
         ]
 
@@ -241,7 +243,8 @@ class PyTorchMegatronLM_CE_Dev(PyTorchMegatronLM, ContainerEngineMixin):
     valid_prog_environs = ['builtin']
     maintainers = ['VCUE']
     tags = {'ce_dev'}
-    container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/megatron-lm:0.15.2-pt25.11'
+    container_image = ('jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/'
+                       'megatron-lm:0.15.2-pt25.11')
 
     @run_after('setup')
     def set_container_config(self):
@@ -259,4 +262,5 @@ class PyTorchMegatronLM_Skybox(PyTorchMegatronLM_CE_Dev):
 
     @run_after('setup')
     def skip_test(self):
-        self.skip('WIP. Requires specific functionality in default hooks and CDIs.')
+        self.skip('WIP: '
+                  'Requires specific functionality in default hooks and CDIs.')

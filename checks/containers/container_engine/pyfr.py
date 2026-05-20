@@ -1,4 +1,4 @@
-# Copyright 2026 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
+# Copyright Swiss National Supercomputing Centre (CSCS/ETH Zurich)
 # ReFrame Project Developers. See the top-level LICENSE file for details.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -20,7 +20,9 @@ from slurm_mpi_pmix import SlurmMpiPmixMixin       # noqa: E402
 
 
 @rfm.simple_test
-class PyFR_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmixMixin):
+class PyFR_CE(rfm.RunOnlyRegressionTest,
+              ContainerEngineMixin,
+              SlurmMpiPmixMixin):
     descr = 'PyFR for CE'
     valid_systems = ['+ce +nvgpu']
     valid_prog_environs = ['builtin']
@@ -40,7 +42,8 @@ class PyFR_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmixMixin
             'UCX_WARN_UNUSED_ENV_VARS': 'n'
         }
     }
-    regex_sim_complete = r'100\.0.* 5.00/5.00 ela: 00:00:(?P<sec>\d+) rem: 00:00:00$'
+    regex_sim_complete = (
+        r'100\.0.* 5.00/5.00 ela: 00:00:(?P<sec>\d+) rem: 00:00:00$')
 
     reference_per_test = {
         '3d-taylor-green-ci': {
@@ -71,7 +74,8 @@ class PyFR_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmixMixin
 
     @performance_function('s')
     def elapsed(self):
-        return sn.extractsingle(self.regex_sim_complete, self.stderr, 'sec', float)
+        return sn.extractsingle(self.regex_sim_complete, self.stderr, 'sec',
+                                float)
 
     @run_before('performance')
     def set_perf_reference(self):

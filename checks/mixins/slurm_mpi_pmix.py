@@ -8,10 +8,8 @@ import reframe as rfm
 
 class SlurmMpiPmixMixin(rfm.RegressionTestPlugin):
     """
-    Set slurm --mpi flags for containers that require PMIx.
-
+    Set slurm --mpi flags for jobs that require PMIx.
     Containers that use OpenMPI require the --mpi=pmix flag.
-
     Additionally silence some warnings triggered by OpenMPI.
     """
 

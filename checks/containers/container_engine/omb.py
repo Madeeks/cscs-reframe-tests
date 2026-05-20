@@ -3,9 +3,9 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# The Containerfiles for the images used in these checks can be found at the following locations:
-# - OMB MPICH: https://github.com/sarus-suite/containerfiles-ci/tree/main/hpc/benchmarks/omb-mpich
-# - OMB OMPI: https://github.com/sarus-suite/containerfiles-ci/tree/main/hpc/benchmarks/omb-openmpi
+# The Containerfiles for the images used in these checks can be found here:
+# - OMB MPICH: https://github.com/sarus-suite/containerfiles-ci/tree/main/hpc/benchmarks/omb-mpich/  # noqa: E501
+# - OMB OMPI: https://github.com/sarus-suite/containerfiles-ci/tree/main/hpc/benchmarks/omb-openmpi/  # noqa: E501
 
 import pathlib
 import sys
@@ -59,7 +59,8 @@ class OMB_Base_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin):
 
     @sanity_function
     def assert_sanity(self):
-        return sn.assert_found(self.sanity_per_test[self.test_name], self.stdout)
+        return sn.assert_found(self.sanity_per_test[self.test_name],
+                               self.stdout)
 
     @run_before('performance')
     def set_reference(self):
@@ -73,8 +74,9 @@ class OMB_Base_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin):
                                           self.stdout, 'bw_4M', float)
             },
             'collective/osu_alltoall': {
-                'latency_1M': sn.extractsingle(r'1048576\s+(?P<latency_1M>\S+)',
-                                               self.stdout, 'latency_1M', float)
+                'latency_1M': sn.extractsingle(
+                    r'1048576\s+(?P<latency_1M>\S+)', self.stdout,
+                    'latency_1M', float)
             }
         }
         self.perf_patterns = self.patterns_per_test[self.test_name]
@@ -82,8 +84,8 @@ class OMB_Base_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin):
 
 @rfm.simple_test
 class OMB_MPICH_CE(OMB_Base_CE, SlurmMpiPmi2Mixin):
-    descr = 'OSU Micro-benchmarks for MPICH/CE (Point-to-Point and All-to-All)'
-    container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/omb:7.5.2-mpich4.3.2-ofi1.22-cuda12.8.1'
+    descr = 'OSU Micro-benchmarks for MPICH/CE (Point-to-Point & All-to-All)'
+    container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/omb:7.5.2-mpich4.3.2-ofi1.22-cuda12.8.1'  # noqa: E501
     valid_systems = ['+ce +nvgpu']
     reference_per_test = {
         'pt2pt/osu_bw': {
@@ -104,8 +106,10 @@ class OMB_MPICH_CE(OMB_Base_CE, SlurmMpiPmi2Mixin):
 
 @rfm.simple_test
 class OMB_OMPI_CE(OMB_Base_CE, SlurmMpiPmixMixin):
-    descr = 'OSU Micro-benchmarks for OpenMPI/CE (Point-to-Point and All-to-All)'
-    container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/omb:7.5.2-ompi5.0.9-ofi1.22-cuda12.8.1'
+    descr = '''
+    OSU Micro-benchmarks for OpenMPI/CE (Point-to-Point & All-to-All)
+    '''
+    container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/omb:7.5.2-ompi5.0.9-ofi1.22-cuda12.8.1'  # noqa: E501
     valid_systems = ['+ce +nvgpu']
     reference_per_test = {
         'pt2pt/osu_bw': {
@@ -126,7 +130,9 @@ class OMB_OMPI_CE(OMB_Base_CE, SlurmMpiPmixMixin):
 
 @rfm.simple_test
 class OMB_MPICH_Skybox(OMB_MPICH_CE):
-    descr = 'OSU Micro-benchmarks for MPICH/CE/Skybox (Point-to-Point and All-to-All)'
+    descr = '''
+    OSU Micro-benchmarks for MPICH/CE/Skybox (Point-to-Point & All-to-All)
+    '''
     tags = {'ce_dev', 'skybox'}
     spank_option = 'edf'
     container_env_key_values = {
@@ -136,7 +142,9 @@ class OMB_MPICH_Skybox(OMB_MPICH_CE):
 
 @rfm.simple_test
 class OMB_OMPI_Skybox(OMB_OMPI_CE):
-    descr = 'OSU Micro-benchmarks for OpenMPI/CE/Skybox (Point-to-Point and All-to-All)'
+    descr = '''
+    OSU Micro-benchmarks for OpenMPI/CE/Skybox (Point-to-Point & All-to-All)
+    '''
     tags = {'ce_dev', 'skybox'}
     spank_option = 'edf'
     container_env_key_values = {

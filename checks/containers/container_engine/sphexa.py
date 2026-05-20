@@ -1,4 +1,4 @@
-# Copyright 2026 Swiss National Supercomputing Centre (CSCS/ETH Zurich)
+# Copyright Swiss National Supercomputing Centre (CSCS/ETH Zurich)
 # ReFrame Project Developers. See the top-level LICENSE file for details.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -12,7 +12,7 @@ import reframe as rfm
 import reframe.utility.sanity as sn
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent.parent / 'mixins'))
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.parent / 'config' / 'utilities'))
+sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.parent / 'config' / 'utilities'))  # noqa: E501
 
 from uenv import uarch                             # noqa: E402
 from container_engine import ContainerEngineMixin  # noqa: E402
@@ -20,14 +20,16 @@ from slurm_mpi_pmi2 import SlurmMpiPmi2Mixin       # noqa: E402
 
 
 @rfm.simple_test
-class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmi2Mixin):
+class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin,
+                SlurmMpiPmi2Mixin):
     descr = 'SPH-EXA for CE'
     valid_systems = ['+ce +nvgpu']
     valid_prog_environs = ['builtin']
-    maintainers = ['VCUE']
+    maintainers = ['SSA', 'VCUE', '@jgphpc']
     tags = {'production', 'ce_dev', 'maintenance'}
 
-    container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/sphexa:0.96.2-mpich4.3.2-ofi1.22-cuda12.8.1'
+    container_image = ('jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/'
+                       'sphexa:0.96.2-mpich4.3.2-ofi1.22-cuda12.8.1')
     sph_infile = parameter(['/sphexa/50c.h5'])
     num_gpus = parameter([8])
     sph_testcase = parameter(['evrard'])
@@ -51,12 +53,6 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmi2Mix
         self.num_tasks = self.num_gpus
         self.num_tasks_per_node = self.ntasks_per_node
         self.num_cpus_per_task = 30
-        # self.skip_if_no_procinfo()
-        # self.num_cpus_per_task = (
-        #     self.current_partition.processor.info["num_cpus"]
-        #     // self.current_partition.processor.info["num_cpus_per_core"]
-        #     // self.num_tasks_per_node
-        # )
         self.job.options = [
             f'--nodes={int(self.num_gpus / self.num_tasks_per_node)}'
             if self.num_tasks > self.num_tasks_per_node else '--nodes=1',
@@ -82,11 +78,7 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmi2Mix
                                  float)
         return sec / steps
 
-    _ref_sec_per_step = {
-        'evrard': {
-            'gh200': 1.7,
-            'a100':  1.9},
-    }
+    _ref_sec_per_step = {'evrard': {'gh200': 1.7, 'a100':  1.9}}
 
     @run_before('performance')
     def set_perf_reference(self):
