@@ -37,7 +37,7 @@ class PyFR_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin, SlurmMpiPmixMixin
     container_workdir = '/pyfr-test-cases/3d-taylor-green'
     container_env_table = {
         'annotations.com.hooks': {
-            'netstack.source': 'artifact:26.05.1b',
+            'netstack.source': 'artifact:26.05.1',
         },
         'env': {
             'UCX_WARN_UNUSED_ENV_VARS': 'n'
