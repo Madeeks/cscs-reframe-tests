@@ -16,12 +16,12 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.parent / 'config
 
 from uenv import uarch                             # noqa: E402
 from container_engine import ContainerEngineMixin  # noqa: E402
-from slurm_mpi_pmi2 import SlurmMpiPmi2Mixin       # noqa: E402
+from slurm_mpi_pmix import SlurmMpiPmixMixin       # noqa: E402
 
 
 @rfm.simple_test
 class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin,
-                SlurmMpiPmi2Mixin):
+                SlurmMpiPmixMixin):
     descr = 'SPH-EXA for CE'
     valid_systems = ['+ce +nvgpu']
     valid_prog_environs = ['builtin']
@@ -29,7 +29,7 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin,
     tags = {'production', 'ce_dev', 'maintenance'}
 
     container_image = ('jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/'
-                       'sphexa:0.96.2-mpich4.3.2-ofi1.22-cuda12.8.1')
+                       'sphexa:0.96.2-ompi5.0.9-ofi1.22-cuda12.8.1')
     sph_infile = parameter(['/sphexa/50c.h5'])
     num_gpus = parameter([8])
     sph_testcase = parameter(['evrard'])
@@ -57,7 +57,10 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin,
             f'--nodes={int(self.num_gpus / self.num_tasks_per_node)}'
             if self.num_tasks > self.num_tasks_per_node else '--nodes=1',
         ]
-        self.env_vars = {'OMP_NUM_THREADS': '$SLURM_CPUS_PER_TASK'}
+        self.env_vars = {
+            'OMP_NUM_THREADS': '$SLURM_CPUS_PER_TASK',
+            'OMPI_MCA_io': '^ompio'
+        }
 
     @sanity_function
     def assert_results(self):
