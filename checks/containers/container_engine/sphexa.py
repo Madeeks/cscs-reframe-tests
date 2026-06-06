@@ -35,11 +35,17 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin,
     sph_testcase = parameter(['evrard'])
     sph_steps = parameter([10])
     sph_size = parameter([200])
-    ntasks_per_node = variable(int, value=4)
+    ntasks_per_node = variable(int, value=1)
     time_limit = '3m'
     regex_elapsed = (
         r'Total execution time of (?P<steps>\d+) iterations of \S+ '
         r'up to t = \S+: (?P<sec>\S+)s$')
+
+    container_env_table = {
+        'annotations.com.hooks': {
+            'netstack.source': 'artifact:26.05.1',
+        },
+        }
 
     @run_before('run')
     def set_executable(self):

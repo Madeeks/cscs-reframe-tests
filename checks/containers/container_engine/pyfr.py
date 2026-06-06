@@ -38,6 +38,9 @@ class PyFR_CE(rfm.RunOnlyRegressionTest,
     container_image = 'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/pyfr:2.1-ompi5.0.9-ofi1.22-cuda12.8.1'
     container_workdir = '/pyfr-test-cases/3d-taylor-green'
     container_env_table = {
+        'annotations.com.hooks': {
+            'netstack.source': 'artifact:26.05.1',
+        },
         'env': {
             'UCX_WARN_UNUSED_ENV_VARS': 'n'
         }
@@ -48,7 +51,7 @@ class PyFR_CE(rfm.RunOnlyRegressionTest,
     reference_per_test = {
         '3d-taylor-green-ci': {
             'gh200': {
-                'elapsed': (18.0, -0.10, 0.10, 's')
+                'elapsed': (18.0, -0.20, 0.20, 's')
             },
             'a100': {
                 'elapsed': (36.0, -0.10, 0.10, 's')

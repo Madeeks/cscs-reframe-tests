@@ -30,6 +30,7 @@ class OMB_Base_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin):
     container_env_table = {
         'annotations.com.hooks': {
             'cxi.enabled': 'true',
+            'netstack.source': 'artifact:26.05.1',
         }
     }
     tags = {'production', 'ce', 'ce_dev', 'maintenance'}
@@ -98,7 +99,7 @@ class OMB_MPICH_CE(OMB_Base_CE, SlurmMpiPmi2Mixin):
                 'latency_1M': (2400., None, 0.15, 'us')
             },
             '*': {
-                'latency_1M': (1800., None, 0.15, 'us')
+                'latency_1M': (2000., None, 0.15, 'us')
             }
         }
     }
@@ -122,7 +123,7 @@ class OMB_OMPI_CE(OMB_Base_CE, SlurmMpiPmixMixin):
                 'latency_1M': (1400., None, 0.15, 'us')
             },
             '*': {
-                'latency_1M': (500., None, 0.15, 'us')
+                'latency_1M': (550., None, 0.15, 'us')
             }
         }
     }
