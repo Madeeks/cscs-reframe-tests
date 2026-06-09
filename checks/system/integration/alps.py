@@ -62,6 +62,64 @@ def create_checks(check):
         not_expected=[r'sending signal',  'stderr']
     )
 
+    check(
+        'findmnt -u -O nosuid /ritom/scratch || echo FAILED',
+        name='ritom-mount-nosuid',
+        descr='Verify ritom nosuid',
+        valid_systems=['eiger', 'daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O remoteports=172.28.55.1-172.28.55.96 /ritom/scratch || echo FAILED',
+        name='ritom-mount-remoteports',
+        descr='Verify ritom remoteports=172.28.55.1-172.28.55.96',
+        valid_systems=['eiger', 'daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O nconnect=64 /ritom/scratch || echo FAILED',
+        name='ritom-mount-nconnect',
+        descr='Verify ritom nconnect=64',
+        valid_systems=['daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O optlockflush /ritom/scratch || echo FAILED',
+        name='ritom-mount-optlockflush',
+        descr='Verify ritom optlockflush',
+        valid_systems=['eiger', 'daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O noextend /ritom/scratch || echo FAILED',
+        name='ritom-mount-noextend',
+        descr='Verify ritom noextend',
+        valid_systems=['eiger', 'daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O lookupcache=pos /ritom/scratch || echo FAILED',
+        name='ritom-mount-loopupcache',
+        descr='Verify ritom lookupcache=pos',
+        valid_systems=['daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O spread_reads /ritom/scratch || echo FAILED',
+        name='ritom-mount-spread_reads',
+        descr='Verify ritom spread_reads',
+        valid_systems=['daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+    check(
+        'findmnt -u -O spread_writes /ritom/scratch || echo FAILED',
+        name='ritom-mount-spread_writes',
+        descr='Verify ritom spread_writes',
+        valid_systems=['daint', 'clariden', 'starlex'],
+        not_expected=[r'FAILED']
+    )
+
+
     # ----------------------------------------------------------------------- #
     #
     #                                   Network
@@ -218,6 +276,21 @@ def create_checks(check):
         descr='Verify hsn3 has expected IP address range',
         valid_systems=['daint', 'santis', 'clariden', 'starlex'],
         expected=r'inet 172.28.*.*/16 brd 172.28.255.255 scope global hsn3'
+    )
+
+    check(
+        'slingshot-show-cxi-iommu-group | grep type=identity | wc -l'
+        name='slingshot-iommu-group'
+        descr='Verify CXI IOMMU group is set to identity on all NICs',
+        valid_systems=['daint', 'santis', 'clariden', 'starlex'],
+        expected=r'4'
+    )
+    check(
+        'grep -q "iommu.passthrough=y"  /proc/cmdline || echo FAILED',
+        name='slingshot-iommu-group'
+        descr='Verify IOMMU pass through is enabled on Eiger',
+        valid_systems=['eiger'],
+        not_expected=r'FAILED'
     )
 
     # ----------------------------------------------------------------------- #
