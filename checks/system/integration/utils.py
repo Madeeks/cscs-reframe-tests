@@ -6,7 +6,8 @@
 # Definition of Check class and function.
 #
 
-from itertools import product
+# needed when combining system name and tag in "valid_systems" is supported by ReFrame.
+#from itertools import product
 
 def make_valid_systems(valid_systems, where):
     if isinstance(valid_systems, str):
