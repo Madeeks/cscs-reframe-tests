@@ -186,9 +186,6 @@ class OMB_MPICH_Skybox(OMB_MPICH_CE):
     '''
     tags = {'ce_dev', 'skybox'}
     spank_option = 'edf'
-    container_env_key_values = {
-        'devices': ["alps.cscs/cxi=all", "nvidia.com/gpu=all", "/dev/gdrdrv"]
-    }
 
 
 @rfm.simple_test
@@ -198,6 +195,3 @@ class OMB_OMPI_Skybox(OMB_OMPI_CE):
     '''
     tags = {'ce_dev', 'skybox'}
     spank_option = 'edf'
-    container_env_key_values = {
-        'devices': ["alps.cscs/cxi=all", "nvidia.com/gpu=all", "/dev/gdrdrv"]
-    }

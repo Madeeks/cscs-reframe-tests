@@ -93,6 +93,9 @@ class PyFR_Skybox(PyFR_CE):
     descr = 'PyFR for CE/Skybox'
     tags = {'ce_dev', 'skybox'}
     spank_option = 'edf'
-    container_env_key_values = {
-        'devices': ["alps.cscs/cxi=all", "nvidia.com/gpu=all", "/dev/gdrdrv"]
-    }
+
+    @run_after('init')
+    def setup_hooks(self):
+        self.container_env_table['annotations.com.hooks'] ={
+            'cxi.enabled': 'true'
+        }
