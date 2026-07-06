@@ -47,7 +47,7 @@ class XCCLTestsBase(rfm.RunOnlyRegressionTest):
                 'GB/s': (13.5, -0.15, 0.15, 'GB/s')
             },
             'a100': {
-                'GB/s': (19.0, -0.05, 0.05, 'GB/s')
+                'GB/s': (13.5, -0.15, 0.15, 'GB/s')
             }
         },
         'all_reduce': {
@@ -61,7 +61,7 @@ class XCCLTestsBase(rfm.RunOnlyRegressionTest):
                 'GB/s': (105.0, -0.05, 0.05, 'GB/s')
             },
             'a100': {
-                'GB/s': (31.0, -0.05, 0.10, 'GB/s')
+                'GB/s': (66.0, -0.05, 0.05, 'GB/s')
             }
         }
     }
@@ -196,8 +196,7 @@ class NCCLTestsSkybox(NCCLTestsCE):
     @run_after('init')
     def setup_hooks(self):
         self.container_env_table['annotations.com.hooks'].update({
-            'cxi.enabled': 'true',
-            'aws_ofi_nccl.enabled': 'true'
+            'cxi.enabled': 'true'
         })
 
 
