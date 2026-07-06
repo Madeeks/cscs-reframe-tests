@@ -96,6 +96,6 @@ class PyFR_Skybox(PyFR_CE):
 
     @run_after('init')
     def setup_hooks(self):
-        self.container_env_table['annotations.com.hooks'] ={
+        self.container_env_table['annotations.com.hooks'] = {
             'cxi.enabled': 'true'
         }

@@ -81,7 +81,7 @@ class SphExa_CE(rfm.RunOnlyRegressionTest, ContainerEngineMixin,
                                  float)
         return sec / steps
 
-    _ref_sec_per_step = {'evrard': {'gh200': 1.7, 'a100':  1.9}}
+    _ref_sec_per_step = {'evrard': {'gh200': 1.7, 'a100': 1.9}}
 
     @run_before('performance')
     def set_perf_reference(self):

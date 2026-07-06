@@ -123,7 +123,7 @@ class OMB_OMPI_CE(OMB_Base_CE, SlurmMpiPmixMixin):
     container_image = (
         'jfrog.svc.cscs.ch/ghcr/sarus-suite/containerfiles-ci/'
         'omb:7.5.2-ompi5.0.9-ofi1.22-cuda12.8.1'
-        )
+    )
     valid_systems = ['+ce +nvgpu']
     reference_per_test = {
         'pt2pt/osu_bw': {
