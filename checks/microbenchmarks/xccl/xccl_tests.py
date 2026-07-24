@@ -178,7 +178,7 @@ class NCCLTestsCE(XCCLTestsBaseCE):
 
 @rfm.simple_test
 class NCCLTestsCEHost(NCCLTestsCE):
-    descr = 'Point-to-Point and All-Reduce NCCL tests with CE and host netstack'
+    descr = 'Point-to-Point and All-Reduce NCCL test with CE and host netstack'
 
     @run_after('init')
     def setup_netstack_source(self):
