@@ -11,8 +11,8 @@ import pathlib
 import reframe as rfm
 import reframe.utility.sanity as sn
 
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent / 'mixins'))
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.parent / 'config' / 'utilities'))
+sys.path.append(str(pathlib.Path(__file__).parent.parent.parent / 'mixins'))  # noqa: E501
+sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.parent / 'config' / 'utilities'))  # noqa: E501
 
 from uenv import uarch                             # noqa: E402
 from container_engine import ContainerEngineMixin  # noqa: E402
